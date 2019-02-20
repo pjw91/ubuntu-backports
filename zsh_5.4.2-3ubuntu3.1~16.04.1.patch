@@ -1,0 +1,61 @@
+diff -ru a/debian/changelog b/debian/changelog
+--- a/debian/changelog	2018-09-11 04:02:52.000000000 +0800
++++ b/debian/changelog	2019-02-20 21:33:48.270995677 +0800
+@@ -1,3 +1,17 @@
++zsh (5.4.2-3ubuntu3.1~16.04.1) xenial; urgency=medium
++
++  * Backports
++    * debian/compat: `11` -> `10`
++    * debian/control: `debhelper (>= 11~)` -> `debhelper`, `-> dh-autoreconf`
++    * debian/rules:
++      * `%` target: `dh $@` -> `dh $@ --with autoreconf`
++      * `override_dh_installdocs-indep` target:
++        * `dh_installdocs -pzsh-doc --link-doc=zsh-common --doc-main-package=zsh-common`
++          ->
++          `dh_installdocs -pzsh-doc --link-doc=zsh-common`
++
++ -- mail6543210 <mail6543210@yahoo.com.tw>  Wed, 20 Feb 2019 20:29:04 +0800
++
+ zsh (5.4.2-3ubuntu3.1) bionic-security; urgency=medium
+ 
+   * SECURITY UPDATE: Arbitrary code execution
+diff -ru a/debian/compat b/debian/compat
+--- a/debian/compat	2017-12-31 06:17:16.000000000 +0800
++++ b/debian/compat	2019-02-20 20:13:12.822855562 +0800
+@@ -1 +1 @@
+-11
++10
+diff -ru a/debian/control b/debian/control
+--- a/debian/control	2017-12-31 06:17:15.000000000 +0800
++++ b/debian/control	2019-02-20 21:50:47.425660212 +0800
+@@ -3,7 +3,8 @@
+ Priority: optional
+ Build-Depends: bsdmainutils,
+                cm-super-minimal,
+-               debhelper (>= 11~),
++               debhelper,
++               dh-autoreconf,
+                dpkg-dev (>= 1.16.2~),
+                ghostscript,
+                groff,
+diff -ru a/debian/rules b/debian/rules
+--- a/debian/rules	2018-01-19 17:09:13.000000000 +0800
++++ b/debian/rules	2019-02-20 20:24:20.566077208 +0800
+@@ -49,7 +49,7 @@
+ BUILT_USING=$(shell dpkg-query -f '$${source:Package} (= $${source:Version}), ' -W libcap-dev libncursesw5-dev libpcre3-dev libc-dev-bin)
+ 
+ %:
+-	dh $@
++	dh $@ --with autoreconf
+ 
+ override_dh_auto_build-arch: build-dynamic build-static
+ build-dynamic:
+@@ -84,7 +84,7 @@
+ 	dh_auto_clean -B obj-static
+ 
+ override_dh_installdocs-indep:
+-	dh_installdocs -pzsh-doc --link-doc=zsh-common --doc-main-package=zsh-common
++	dh_installdocs -pzsh-doc --link-doc=zsh-common
+ 	dh_installdocs -pzsh-common
+ 
+ # Needs a freshly built (arch-dependent) zsh executable to compile .zwc files
